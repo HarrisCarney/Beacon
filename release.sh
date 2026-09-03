@@ -141,8 +141,31 @@ else
     spctl -a -vv "$APP_PATH"
 fi
 
+# Strip xattrs and archive without them. A plain `ditto -c -k` stores extended
+# attributes inside the zip; Apple's extractors reapply them as real xattrs, but
+# any other unzip tool materializes them as ._* AppleDouble files. Those are
+# unsealed extra content in the framework root, which breaks the code signature
+# and gets the app rejected by Gatekeeper on the user's machine. Verified safe:
+# the notarization ticket lives in Contents/CodeResources, a real file, so
+# clearing xattrs after stapling leaves both ticket and signature intact.
 echo "==> Zipping -> $ZIP_NAME"
-ditto -c -k --keepParent "$APP_PATH" "$ZIP_PATH"
+xattr -cr "$APP_PATH" 2>/dev/null || true
+ditto -c -k --keepParent --norsrc --noextattr "$APP_PATH" "$ZIP_PATH"
+
+# Prove the archive survives a non-Apple extractor before it ships.
+VERIFY_DIR="$BUILD_DIR/ziptest"
+rm -rf "$VERIFY_DIR" && mkdir -p "$VERIFY_DIR"
+if unzip -q "$ZIP_PATH" -d "$VERIFY_DIR" 2>/dev/null; then
+    AD_COUNT="$(find "$VERIFY_DIR" -name "._*" | wc -l | tr -d " ")"
+    if [ "$AD_COUNT" != "0" ]; then
+        echo "Archive contains $AD_COUNT AppleDouble entries; would break on extract." >&2
+        exit 1
+    fi
+    codesign --verify --deep --strict "$VERIFY_DIR/Beacon.app" \
+        || { echo "Extracted app fails signature verification." >&2; exit 1; }
+    echo "    archive verified clean (0 AppleDouble, signature intact)"
+fi
+rm -rf "$VERIFY_DIR"
 
 echo "==> Signing update with Sparkle EdDSA key"
 # Prints e.g.  sparkle:edSignature="..." length="123456"
