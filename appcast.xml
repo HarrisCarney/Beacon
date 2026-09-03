@@ -6,5 +6,16 @@
     <description>Update feed for Beacon, the macOS on-air menu bar app.</description>
     <language>en</language>
     <!-- RELEASES: release.sh inserts each new <item> directly below this line, newest first. -->
+    <item>
+        <title>Version 1.0</title>
+        <sparkle:version>1</sparkle:version>
+        <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <pubDate>Thu, 03 Sep 2026 17:25:51 -0500</pubDate>
+        <enclosure
+            url="https://github.com/HarrisCarney/Beacon/releases/download/v1.0/Beacon-1.0.zip"
+            sparkle:edSignature="hipyw+fpBN1w42FPIqUU8+P5PLfBCSPbCT6gAHACLLODc1zUCIaL5KQWVORyy8M5hHsEv3wL7H/tx6jGkA9LDw==" length="1103536"
+            type="application/octet-stream" />
+    </item>
 </channel>
 </rss>
