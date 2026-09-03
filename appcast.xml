@@ -7,6 +7,17 @@
     <language>en</language>
     <!-- RELEASES: release.sh inserts each new <item> directly below this line, newest first. -->
     <item>
+        <title>Version 1.3</title>
+        <sparkle:version>4</sparkle:version>
+        <sparkle:shortVersionString>1.3</sparkle:shortVersionString>
+        <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+        <pubDate>Thu, 03 Sep 2026 17:47:04 -0500</pubDate>
+        <enclosure
+            url="https://github.com/HarrisCarney/Beacon/releases/download/v1.3/Beacon-1.3.zip"
+            sparkle:edSignature="8W+C/ZWToieykz6DgNJ8XenRAbCp22ydWmxedUT0o9Z84qPyu+uJfCC4LdEuqsBV/PW5NaasLZLIsA5i6R+tDA==" length="1165000"
+            type="application/octet-stream" />
+    </item>
+    <item>
         <title>Version 1.2</title>
         <sparkle:version>3</sparkle:version>
         <sparkle:shortVersionString>1.2</sparkle:shortVersionString>
