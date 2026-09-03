@@ -1,0 +1,67 @@
+# Add this to your Home Assistant automations.yaml, or paste it into
+# Settings -> Automations -> Create Automation -> Edit in YAML.
+#
+# The webhook_id below is the secret half of the URL. Change it to something
+# only you know, then point Beacon at:
+#   http://homeassistant.local:8123/api/webhook/<your_webhook_id>
+
+- id: beacon_on_air_state
+  alias: "Beacon: mic state -> on_a_call helper"
+  description: >-
+    Beacon POSTs {"state": "on"|"off", "timestamp": "..."} whenever the Mac's
+    microphone starts or stops being used by any app.
+  trigger:
+    - platform: webhook
+      webhook_id: beacon_on_air_CHANGE_ME
+      # local_only keeps the webhook reachable only from your LAN. Set it to
+      # false only if the Mac reaches HA over the internet (e.g. Nabu Casa).
+      local_only: true
+      allowed_methods:
+        - POST
+  action:
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.json.state == 'on' }}"
+          sequence:
+            - service: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.on_a_call
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.json.state == 'off' }}"
+          sequence:
+            - service: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.on_a_call
+  # queued so a rapid on/off/on burst is applied in order, never dropped.
+  mode: queued
+  max: 10
+
+# ---------------------------------------------------------------------------
+# Example of using the helper. Delete or adapt freely — this is the part where
+# you decide what "on air" actually does in your house.
+# ---------------------------------------------------------------------------
+- id: beacon_on_air_light
+  alias: "Beacon: on-air light follows on_a_call"
+  trigger:
+    - platform: state
+      entity_id: input_boolean.on_a_call
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: input_boolean.on_a_call
+              state: "on"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.office_sign
+              data:
+                color_name: red
+                brightness_pct: 80
+      default:
+        - service: light.turn_off
+          target:
+            entity_id: light.office_sign
+  mode: queued

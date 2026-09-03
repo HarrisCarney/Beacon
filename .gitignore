@@ -1,0 +1,10 @@
+# Xcode
+build/
+dist/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcarchive
+
+# Sparkle CLI tools — re-download with the command in release.sh
+Tools/

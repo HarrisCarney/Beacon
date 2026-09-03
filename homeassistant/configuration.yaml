@@ -1,0 +1,11 @@
+# Add this to your Home Assistant configuration.yaml.
+# Creates the helper that Beacon drives. Restart HA after adding it.
+#
+# (You can also create this in the UI instead:
+#  Settings -> Devices & Services -> Helpers -> Create Helper -> Toggle,
+#  named "On a call", which produces the same input_boolean.on_a_call entity.)
+
+input_boolean:
+  on_a_call:
+    name: On a call
+    icon: mdi:phone-in-talk
